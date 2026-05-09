@@ -1,3 +1,4 @@
+import NewsItem from "@/components/News/NewsItem";
 import { useState } from "react";
 
 type Tab = "top" | "new" | "best";
@@ -12,8 +13,8 @@ const News = () => {
   const [activeTab, setActiveTab] = useState<Tab>("top");
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">AIPIA News</h1>
+    <div className="p-4">
+      <h1 className="text-4xl font-bold mb-4">AIPIA News</h1>
       <div>
         <ul className="flex gap-[12px] border-b border-gray-200">
           {tabs.map((tab) => (
@@ -33,36 +34,7 @@ const News = () => {
         </ul>
 
         <ul>
-          <li>
-            <div>
-              <img src="" alt="" />
-            </div>
-            <div>
-              <div>title</div>
-              <div>author</div>
-              <div>0000-00-00</div>
-            </div>
-          </li>
-          <li>
-            <div>
-              <img src="" alt="" />
-            </div>
-            <div>
-              <div>title</div>
-              <div>author</div>
-              <div>0000-00-00</div>
-            </div>
-          </li>
-          <li>
-            <div>
-              <img src="" alt="" />
-            </div>
-            <div>
-              <div>title</div>
-              <div>author</div>
-              <div>0000-00-00</div>
-            </div>
-          </li>
+          <NewsItem title="title" author="author" date="0000-00-00" />
         </ul>
       </div>
     </div>
