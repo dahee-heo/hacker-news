@@ -17,9 +17,9 @@ const NewsDetail = () => {
   return (
     <div className="p-4">
       <div>
-        <h1 className="text-2xl font-bold">{data?.title}</h1>
+        <h1 className="text-2xl font-bold leading-tight">{data?.title}</h1>
         <p className="text-sm text-gray-600 mt-2">{data?.by}</p>
-        <p className="text-sm text-gray-600">{formatDate(data.time)}</p>
+        <p className="text-sm text-gray-600 mt-1">{formatDate(data.time)}</p>
       </div>
       <hr className="border-gray-200 my-4" />
       <div>
