@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface NewsItemProps {
@@ -8,11 +9,13 @@ interface NewsItemProps {
   imageUrl: string;
 }
 
-const NewsItem = ({ id, title, author, date, imageUrl }: NewsItemProps) => {
+const NewsItem = forwardRef<HTMLLIElement, NewsItemProps>(
+({ id, title, author, date, imageUrl }, ref) => {
   const navigate = useNavigate();
 
   return (
     <li
+      ref={ref}
       className="flex gap-[12px] py-4 cursor-pointer group"
       onClick={() => navigate(`/news/${id}`)}
     >
@@ -32,6 +35,6 @@ const NewsItem = ({ id, title, author, date, imageUrl }: NewsItemProps) => {
       </div>
     </li>
   );
-};
+});
 
 export default NewsItem;

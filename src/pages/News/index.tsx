@@ -1,15 +1,10 @@
-import {
-  reqGetBestStories,
-  reqGetNewStories,
-  reqGetStory,
-  reqGetTopStories,
-} from "@/apis/news";
+import { useState, useRef, useCallback } from "react";
 import NewsItem from "@/components/News/NewsItem";
-import { Story } from "@/types/news";
-import { useQueries, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-
-type Tab = "top" | "new" | "best";
+import {
+  useIdsQuery,
+  useStoriesInfiniteQuery,
+} from "@/hooks/queries/useNewsQuery";
+import { Story, Tab } from "@/types/news";
 
 const tabs: { label: string; value: Tab }[] = [
   { label: "Top", value: "top" },
@@ -17,47 +12,45 @@ const tabs: { label: string; value: Tab }[] = [
   { label: "Best", value: "best" },
 ];
 
-const apis = {
-  top: reqGetTopStories,
-  new: reqGetNewStories,
-  best: reqGetBestStories,
-};
-
 const News = () => {
   const [activeTab, setActiveTab] = useState<Tab>("top");
 
-  const { data: ids = [] } = useQuery({
-    queryKey: [activeTab],
-    queryFn: apis[activeTab],
-    staleTime: 1000 * 60 * 5,
-  });
+  const { data: ids = [] } = useIdsQuery(activeTab);
 
-  const stories = useQueries({
-    queries: ids.slice(0, 10).map((id: number) => ({
-      queryKey: ["story", id],
-      queryFn: () => reqGetStory(id),
-      staleTime: 1000 * 60 * 10,
-    })),
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
+    useStoriesInfiniteQuery(ids);
 
-  const isLoading = ids.length === 0 || stories.some((s) => s.isPending);
-  const data = stories
-    .map((s) => s.data)
-    .filter((item): item is Story => !!item);
+  const stories: Story[] = data?.pages.flatMap((page) => page) ?? [];
+  const isLoading = isPending && ids.length > 0;
+
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const lastItemRef = useCallback(
+    (node: HTMLLIElement | null) => {
+      if (isFetchingNextPage) return;
+      if (observerRef.current) observerRef.current.disconnect();
+      observerRef.current = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && hasNextPage) fetchNextPage();
+      });
+      if (node) observerRef.current.observe(node);
+    },
+    [isFetchingNextPage, hasNextPage, fetchNextPage],
+  );
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+  };
 
   return (
     <div className="p-4">
       <h1 className="text-4xl font-bold mb-4">AIPIA News</h1>
-      <div>
+
       <ul className="flex gap-[12px] border-b border-gray-200">
         {tabs.map((tab) => (
           <li key={tab.value}>
             <button
-                onClick={() => setActiveTab(tab.value)}
+              onClick={() => handleTabChange(tab.value)}
               className={`pb-1 text-sm font-medium border-b-2 ${
-                  activeTab === tab.value
-                    ? "border-black"
-                    : "border-transparent"
+                activeTab === tab.value ? "border-black" : "border-transparent"
               }`}
             >
               {tab.label}
@@ -81,8 +74,9 @@ const News = () => {
         </ul>
       ) : (
         <ul>
-            {data.map((item) => (
+          {stories.map((item, index) => (
             <NewsItem
+              ref={index === stories.length - 1 ? lastItemRef : null}
               id={item.id}
               key={item.id}
               title={item.title}
@@ -91,9 +85,18 @@ const News = () => {
               imageUrl={`https://picsum.photos/seed/${item.id}/64/64`}
             />
           ))}
+          {isFetchingNextPage && (
+            <li className="flex gap-3 py-3 animate-pulse">
+              <div className="w-16 h-16 bg-gray-200 rounded flex-shrink-0" />
+              <div className="flex flex-col gap-2 flex-1">
+                <div className="h-3 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/4" />
+              </div>
+            </li>
+          )}
         </ul>
       )}
-      </div>
     </div>
   );
 };

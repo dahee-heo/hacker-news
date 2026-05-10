@@ -8,3 +8,5 @@ export interface Story {
   descendants: number;
   type: string;
 }
+
+export type Tab = "top" | "new" | "best";
