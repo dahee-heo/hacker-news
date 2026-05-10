@@ -49,49 +49,50 @@ const News = () => {
     <div className="p-4">
       <h1 className="text-4xl font-bold mb-4">AIPIA News</h1>
       <div>
-        <ul className="flex gap-[12px] border-b border-gray-200">
-          {tabs.map((tab) => (
-            <li key={tab.value}>
-              <button
+      <ul className="flex gap-[12px] border-b border-gray-200">
+        {tabs.map((tab) => (
+          <li key={tab.value}>
+            <button
                 onClick={() => setActiveTab(tab.value)}
-                className={`pb-1 text-sm font-medium border-b-2 ${
+              className={`pb-1 text-sm font-medium border-b-2 ${
                   activeTab === tab.value
                     ? "border-black"
                     : "border-transparent"
-                }`}
-              >
-                {tab.label}
-              </button>
+              }`}
+            >
+              {tab.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {isLoading ? (
+        <ul>
+          {Array.from({ length: 10 }).map((_, i) => (
+            <li key={i} className="flex gap-3 py-3 animate-pulse">
+              <div className="w-16 h-16 bg-gray-200 rounded flex-shrink-0" />
+              <div className="flex flex-col gap-2 flex-1">
+                <div className="h-3 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/4" />
+              </div>
             </li>
           ))}
         </ul>
-
-        {isLoading ? (
-          <ul>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <li key={i} className="flex gap-3 py-3 animate-pulse">
-                <div className="w-16 h-16 bg-gray-200 rounded flex-shrink-0" />
-                <div className="flex flex-col gap-2 flex-1">
-                  <div className="h-3 bg-gray-200 rounded w-3/4" />
-                  <div className="h-3 bg-gray-200 rounded w-1/4" />
-                  <div className="h-3 bg-gray-200 rounded w-1/4" />
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ul>
+      ) : (
+        <ul>
             {data.map((item) => (
-              <NewsItem
-                key={item.id}
-                title={item.title}
-                author={item.by}
-                date={new Date(item.time * 1000).toLocaleDateString()}
-                imageUrl={`https://picsum.photos/seed/${item.id}/64/64`}
-              />
-            ))}
-          </ul>
-        )}
+            <NewsItem
+              id={item.id}
+              key={item.id}
+              title={item.title}
+              author={item.by}
+              date={new Date(item.time * 1000).toLocaleDateString()}
+              imageUrl={`https://picsum.photos/seed/${item.id}/64/64`}
+            />
+          ))}
+        </ul>
+      )}
       </div>
     </div>
   );
