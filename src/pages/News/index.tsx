@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import NewsItem from "@/components/News/NewsItem";
 import {
   useIdsQuery,
@@ -7,6 +7,8 @@ import {
 import { Story, Tab } from "@/types/news";
 import NewsListSkeleton from "@/components/News/NewsListSkeleton";
 import { formatDate } from "@/utils/date";
+import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const tabs: { label: string; value: Tab }[] = [
   { label: "Top", value: "top" },
@@ -15,7 +17,9 @@ const tabs: { label: string; value: Tab }[] = [
 ];
 
 const News = () => {
-  const [activeTab, setActiveTab] = useState<Tab>("top");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const activeTab = (searchParams.get("tab") as Tab) ?? "top";
 
   const { data: ids = [] } = useIdsQuery(activeTab);
 
@@ -39,13 +43,19 @@ const News = () => {
   );
 
   const handleTabChange = (tab: Tab) => {
-    setActiveTab(tab);
+    setSearchParams({ tab }, { replace: true });
   };
 
   return (
     <div className="p-4">
-      <h1 className="text-4xl font-bold mb-4">AIPIA News</h1>
-
+      <h1
+        className="text-4xl font-bold mb-4 cursor-pointer"
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        AIPIA News
+      </h1>
       <ul className="flex gap-[12px] border-b border-gray-200">
         {tabs.map((tab) => (
           <li key={tab.value}>
