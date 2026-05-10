@@ -1,7 +1,7 @@
-const NewsListSkeleton = () => {
+const NewsListSkeleton = ({ length }: { length: number }) => {
   return (
     <ul>
-      {Array.from({ length: 10 }).map((_, i) => (
+      {Array.from({ length }).map((_, i) => (
         <li key={i} className="flex gap-3 py-3 animate-pulse">
           <div className="w-16 h-16 bg-gray-200 rounded flex-shrink-0" />
           <div className="flex flex-col gap-2 flex-1">
