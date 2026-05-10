@@ -6,6 +6,7 @@ import {
 } from "@/hooks/queries/useNewsQuery";
 import { Story, Tab } from "@/types/news";
 import NewsListSkeleton from "@/components/News/NewsListSkeleton";
+import { formatDate } from "@/utils/date";
 
 const tabs: { label: string; value: Tab }[] = [
   { label: "Top", value: "top" },
@@ -71,7 +72,7 @@ const News = () => {
               key={item.id}
               title={item.title}
               author={item.by}
-              date={new Date(item.time * 1000).toLocaleDateString()}
+              date={formatDate(item.time)}
               imageUrl={`https://picsum.photos/seed/${item.id}/64/64`}
             />
           ))}

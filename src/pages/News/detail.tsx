@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { reqGetStory } from "@/apis/news";
 import { useQuery } from "@tanstack/react-query";
 import NewsItemSkeleton from "@/components/News/NewsItemSkeleton";
+import { formatDate } from "@/utils/date";
 
 const NewsDetail = () => {
   const { id } = useParams();
@@ -18,9 +19,7 @@ const NewsDetail = () => {
       <div>
         <h1 className="text-2xl font-bold">{data?.title}</h1>
         <p className="text-sm text-gray-600 mt-2">{data?.by}</p>
-        <p className="text-sm text-gray-600">
-          {new Date(data?.time * 1000).toLocaleDateString()}
-        </p>
+        <p className="text-sm text-gray-600">{formatDate(data.time)}</p>
       </div>
       <hr className="border-gray-200 my-4" />
       <div>
